@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version v0.2.0 (release 2023-11-23)
+
+- global: rename components
+
+
 Version v0.1.0 (release 2023-11-10)
 
 
