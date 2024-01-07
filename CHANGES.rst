@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version v0.2.1 (release 2024-01-07)
+
+- fix: rebuild all databases
+
+
 Version v0.2.0 (release 2023-11-23)
 
 - global: rename components
