@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version v0.2.2 (release 2024-01-12)
+
+- fix: permission problem
+
+
 Version v0.2.1 (release 2024-01-07)
 
 - fix: rebuild all databases
