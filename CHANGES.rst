@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version v0.2.3 (release 2024-02-12)
+
+- fix: update changed lom api
+
+
 Version v0.2.2 (release 2024-01-12)
 
 - fix: permission problem
