@@ -9,6 +9,7 @@
 
 from collections.abc import Callable
 
+from flask import current_app
 from flask_principal import Identity
 from flask_resources import MarshmallowSerializer
 from invenio_rdm_records.records.api import RDMDraft, RDMRecord
@@ -23,6 +24,7 @@ from invenio_records_marc21.records import Marc21Record
 from invenio_records_marc21.services.record import Marc21Metadata
 from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_records_resources.services.uow import Operation, UnitOfWork
+from marshmallow.exceptions import ValidationError
 
 from .serializers import LOMRecordJSONSerializer, Marc21RecordJSONSerializer
 
@@ -61,10 +63,14 @@ def map_metadata_from_a_to_b(
         "original": original,
     }
 
-    current_records_global_search.records_service.create_or_update(
-        identity=identity,
-        data=data,
-    )
+    try:
+        current_records_global_search.records_service.create_or_update(
+            identity=identity,
+            data=data,
+        )
+    except ValidationError as error:
+        msg = "GLOBAL SEARCH pid: %s has following validation error: %s"
+        current_app.logger.warning(msg, pid, error)
 
 
 class ComponentOp(Operation):
