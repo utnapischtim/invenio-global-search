@@ -8,6 +8,15 @@
 Changes
 =======
 
+Version v0.2.4 (release 2024-06-13)
+
+- fix: catch validation error
+  this ensures that rebuilding the database does not exit on the first
+  error
+- setup: support only python3.12
+
+
+
 Version v0.2.3 (release 2024-02-12)
 
 - fix: update changed lom api
