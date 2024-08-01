@@ -58,10 +58,16 @@ def map_metadata_from_a_to_b(
         "schema": schema,
         "pid": pid,
     }
+    parent = {
+        "communities": data["parent"]["communities"],
+    }
+
     data = {
         "metadata": metadata,
         "original": original,
+        "parent": parent,
     }
+    print(f"map_metadata_from_a_to_b data: {data}")
 
     try:
         current_records_global_search.records_service.create_or_update(
