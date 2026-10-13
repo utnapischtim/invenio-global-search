@@ -14,6 +14,7 @@ from flask import current_app
 from flask_principal import Identity
 from invenio_records.api import Record
 from invenio_records_global_search import current_records_global_search
+from invenio_records_resources.services.base.config import ConfiguratorMixin
 from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_records_resources.services.uow import Operation, UnitOfWork
 from marshmallow.exceptions import ValidationError
@@ -33,6 +34,7 @@ GlobalSearchSerializerType: TypeAlias = (
 
 try:
     from invenio_rdm_records.records.api import RDMDraft, RDMRecord
+    from invenio_rdm_records.services.config import RDMRecordServiceConfig
 
     class RDMToGlobalSearchComponent(ServiceComponent):
         """RDMToGlobalSearchComponent."""
@@ -56,12 +58,16 @@ try:
 
 except ImportError:
 
-    class RDMToGlobalSearchComponent(ServiceComponent):
+    class RDMToGlobalSearchComponent(ServiceComponent):  # type: ignore[no-redef]
         """RDMToGlobalSearchComponent."""
+
+    class RDMRecordServiceConfig(ConfiguratorMixin):  # type: ignore[no-redef]
+        """Dummy."""
 
 
 try:
     from invenio_records_lom.records import LOMRecord
+    from invenio_records_lom.services.config import LOMRecordServiceConfig
     from invenio_records_lom.utils import LOMMetadata
 
     class LOMToGlobalSearchComponent(ServiceComponent):
@@ -86,15 +92,19 @@ try:
 
 except ImportError:
 
-    class LOMMetadata:
+    class LOMMetadata:  # type: ignore[no-redef]
         """Dummy class to have it for type checker."""
 
-    class LOMToGlobalSearchComponent(ServiceComponent):
+    class LOMToGlobalSearchComponent(ServiceComponent):  # type: ignore[no-redef]
         """Dummy class."""
+
+    class LOMRecordServiceConfig(ConfiguratorMixin):  # type: ignore[no-redef]
+        """Dummy."""
 
 
 try:
     from invenio_records_marc21.records import Marc21Record
+    from invenio_records_marc21.services.config import Marc21RecordServiceConfig
     from invenio_records_marc21.services.record import Marc21Metadata
 
     class Marc21ToGlobalSearchComponent(ServiceComponent):
@@ -119,11 +129,14 @@ try:
 
 except ImportError:
 
-    class Marc21Metadata:
+    class Marc21Metadata:  # type: ignore[no-redef]
         """Dummy class to have it for type checker."""
 
-    class Marc21ToGlobalSearchComponent(ServiceComponent):
+    class Marc21ToGlobalSearchComponent(ServiceComponent):  # type: ignore[no-redef]
         """Marc21ToGlobalSearchComponent."""
+
+    class Marc21RecordServiceConfig(ConfiguratorMixin):  # type: ignore[no-redef]
+        """Dummy."""
 
 
 def map_metadata_from_a_to_b(
@@ -135,9 +148,9 @@ def map_metadata_from_a_to_b(
 ) -> None:
     """Func."""
     schema_mapping = {
-        "rdm": "records",
-        "lom": "oer",
-        "marc21": "publications",
+        "rdm": RDMRecordServiceConfig,
+        "lom": LOMRecordServiceConfig,
+        "marc21": Marc21RecordServiceConfig,
     }
 
     record_serializer = serializer_cls()
@@ -161,9 +174,11 @@ def map_metadata_from_a_to_b(
         current_app.logger.exception(msg, pid, schema)
         return
 
-    path = schema_mapping[schema]
+    service_config = schema_mapping[schema].build(current_app)
+    link = service_config.links_item["self_html"].expand(record, {})
+
     original = {
-        "view": f"{path}/{pid}",
+        "view": link,
         "schema": schema,
         "pid": pid,
         "created": original_created_date,
