@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version v0.7.0 (released 2026-10-20)
+
+- chore(type): single ignore rule
+- fix(links): generate link over original links
+
 Version v0.6.0 (released 2026-10-02)
 
 - fix: catch serialization exception
